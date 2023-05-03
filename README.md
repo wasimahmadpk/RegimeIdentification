@@ -15,7 +15,7 @@ We extract covariances matrics $\Sigma_i$ $i=1,...,n$ using a sliding window of 
 </p>
 
 ## Data
-We test our method on synthetically generated multivariate nonlinear non-stationary time series as well as geo-climate time series (Recorded at Moxa Geodynamic Observatory) which can be found under `datasets/` directory. The synthetic data is generated using file `src/synthetic_dataset.py`. 
+We test our method on synthetically generated multivariate nonlinear non-stationary time series as well as geo-climate time series which is recorded at Moxa Geodynamic Observatory (MGO) Jena. The data can be found under `datasets/` directory. The synthetic data is generated using file `src/synthetic_dataset.py`. 
 
 
 ## Code
@@ -26,7 +26,7 @@ We test our method on synthetically generated multivariate nonlinear non-station
 
 
 ## Dependencies
-`requirements.txt` contains all the packages that are related to the project.
+The file `requirements.txt` contains all the packages that are related to the project.
 To install them, simply create a new [conda](https://docs.conda.io/en/latest/) environment and type
 ```
 pip install -r requirements.txt
