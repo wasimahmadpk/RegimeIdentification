@@ -1,8 +1,6 @@
 # Regime Identification
-Segmentation of Multivariate Non-stationary Time series 
 
-
-This repository contains code for our work on regime identification for discovering causal graph in geo-climate time series.
+This repository contains code for our work on segmentation of multivariate non-stationary time series. Our goal is to identify regimes in time series discover regime-specific causal graph in geo-climate time series using \href{https://github.com/wasimahmadpk/deepCausality}{CDMI}.
 
 
 ## Overview
