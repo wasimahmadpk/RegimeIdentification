@@ -7,14 +7,10 @@ This repository contains code for our work on regime identification for discover
 
 ## Overview
 
-We extract covariances $\Sigma$ matrics discover full causal graph in multivariate nonlinear systems by testing model invariance against Knockoffs-based interventional environments:
-1. First we train deep network <img src="https://render.githubusercontent.com/render/math?math=f_i"> using data from observational environment <img src="https://render.githubusercontent.com/render/math?math=E_i">.
-2. Then we expose the model to Knockoffs-based interventional environments <img src="https://render.githubusercontent.com/render/math?math=E_k">. 
-3. For each pair variables {<img src="https://render.githubusercontent.com/render/math?math=z_i">, <img src="https://render.githubusercontent.com/render/math?math=z_j">} in nonlinear system, we test model invariance across environments. 
-4. We perform KS test over distribution <img src="https://render.githubusercontent.com/render/math?math=R_i">, <img src="https://render.githubusercontent.com/render/math?math=R_k"> of model residuals in various environments. 
-Our NULL hypothesis is that variable <img src="https://render.githubusercontent.com/render/math?math=z_i"> does not cause <img src="https://render.githubusercontent.com/render/math?math=z_j">, 
-<img src="https://render.githubusercontent.com/render/math?math=H_0">: <img src="https://render.githubusercontent.com/render/math?math=R_i"> = <img src="https://render.githubusercontent.com/render/math?math=R_k">, 
-else the alternate hypothesis <img src="https://render.githubusercontent.com/render/math?math=H_1">: <img src="https://render.githubusercontent.com/render/math?math=R_i"> != <img src="https://render.githubusercontent.com/render/math?math=R_k">  is accepted.
+We extract covariances matrics $\Sigma_i$ $i=1,...,n$ using a sliding window of size $s$. The pool of the covariances matrices is given to clustering algorithm for segmentation.
+1. We use KMeans algorithm to distinguish different dyanmices in the time series.
+2. Since the covariance matrices have high nonlinear geometry therefore we use Riemannian distance as a metric for estimating the distance between regimes.
+
 
 <p align="center">
 <img src="res/synregimes.png" width=100% />
