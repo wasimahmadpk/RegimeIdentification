@@ -11,7 +11,7 @@ We extract covariances matrics $\Sigma_i$ $i=1,...,n$ using a sliding window of 
 
 
 <p align="center">
-<img src="res/synregimes.png" width=100% />
+<img src="res/synregimes.pdf" width=100% />
 </p>
 
 ## Data
