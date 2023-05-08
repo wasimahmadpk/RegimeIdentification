@@ -48,11 +48,5 @@ def getSPDMs(data, wsize):
         covar.append(cov)
 #         print(covmat)
         start = start + winsize
-    
-        distortions = []
-        inertias = []
-        mapping1 = {}
-        mapping2 = {}
-        K = (2, 6)
 
-        return covmat, covar, cluster_idx
+    return covmat, covar, cluster_idx
