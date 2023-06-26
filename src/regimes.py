@@ -129,45 +129,124 @@ def get_reduced_set(df):
     return reduced_df
 
 
-def plot_regimes(data, clusters, cluster_idx, winsize, toplot):
+def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
+     
+    if dtype == 'real':
+          
+        # # Plot regimes in real data
 
-    # Plot regimes
+        # toplot = [ 'rain','strain_ns_corrected', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
+        toplot = ['gw_mb', 'gw_sg', 'temperature_outside', 'strain_ew_corrected', 'strain_ns_corrected']
+        # toplot = ['gw_mb', 'gw_sg', 'gw_west', 'gw_south', 'strain_ns_corrected']
+        # toplot = ['Hs', 'P', 'W' ]
+        colors = ['r', 'g', 'b', 'y', 'c']
 
-    # toplot = [ 'rain','strain_ns_corrected', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
-    # toplot = ['temperature_outside', 'pressure_outside', 'strain_ew_corrected']
-    toplot = ['Z1', 'Z2', 'Z3']
-    # toplot = ['Hs', 'P', 'W' ]
-    colors = ['r', 'g', 'b']
+        t = np.arange(0, cluster_idx[-1]+winsize)
+        start = 0
 
-    t = np.arange(0, cluster_idx[-1]+winsize)
-    start = 0
 
-    for c in range(len(clusters)):
+        plt.figure(figsize=(12, 4))
+        col = ['teal', 'slategrey', 'goldenrod']
+        mark = ['-', '--', '.-.']
 
-        if clusters[c] == 0:
-                marker = '-'
-        elif clusters[c] == 1:
-                marker = '-'
-        elif clusters[c] == 2:
-                marker = '-'
-        for i in range(len(toplot)):
+        # for i, v in enumerate(toplot):
+        #         data.plot(use_index=True, figsize=(10, 3), linewidth=0.75)
+        #         plt.plot(data[v], mark[i], color=col[i])
+        #         plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
+        #         plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
+        #         plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
 
-            plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
-#           plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
-#           plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
+        data[toplot].plot(use_index=True, cmap='tab10', figsize=(9, 3), linewidth=0.75)
+        plt.legend(toplot)
+        for c in range(len(cluster_idx)):
 
-        start = start + winsize
-    plt.legend(toplot)
-    for c in range(len(cluster_idx)):
-        val = cluster_idx[c]
-        if clusters[c] == 0:
-            for v in range(winsize):
-                plt.axvline(val+v, color="red", alpha=0.01)
-        if clusters[c] == 1:
-            for v in range(winsize):
-                plt.axvline(val+v, color="green", alpha=0.01)
-        if clusters[c] == 2:
-            for v in range(winsize):
-                plt.axvline(val+v, color="white", alpha=0.01)
-    plt.savefig("regimes.png")
-    plt.show()
+            val = cluster_idx[c]
+            if clusters[c] == 0:
+                for v in range(winsize):
+                    plt.axvline(val+v, color="gray", alpha=0.1)
+            if clusters[c] == 1:
+                for v in range(winsize):
+                    plt.axvline(val+v, color="white", alpha=0.00)
+            if clusters[c] == 2:
+                for v in range(winsize):
+                    plt.axvline(val+v, color="gray", alpha=0.15)
+            if c not in [0, 3]:
+                plt.axvline(x=val, color='black', linestyle='--', linewidth=0.75)
+        # plt.axvline(x=365, color='red')
+        # plt.text(305, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
+        # plt.axvline(x=730, color='red')
+        # plt.text(670, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
+        plt.ylim(0, 1.35)
+        # plt.gcf().autofmt_xdate()
+        # plt.legend(['$Z_{1}$', '$Z_{2}$', '$Z_{3}$'], loc='upper left', fontsize=6, prop=dict(weight='bold'))
+        plt.legend(['GW$_{mb}$', 'GW$_{sg}$', 'T', 'Strain$_{ew}$', 'Strain$_{ns}$'], loc='upper right', frameon=True, ncol=5)
+        plt.xlabel('')
+        plt.ylabel('normalized values')
+        plt.savefig("../res/georegimes2.pdf", bbox_inches='tight')
+        plt.show()
+
+    else:
+        # Plot regimes in synthetic data
+
+        toplot = ['Z1', 'Z3', 'Z5']
+        # toplot = ['Hs', 'P', 'W' ]
+        colors = ['r', 'g', 'b', 'y', 'c']
+
+        t = np.arange(0, cluster_idx[-1]+winsize)
+        start = 0
+
+        # for c in range(len(clusters)):
+            
+        #     if clusters[c] == 0:
+        #             marker = '-'
+        #     elif clusters[c] == 1:
+        #             marker = '-'
+        #     elif clusters[c] == 2:
+        #             marker = '-'
+        #     for i in toplot:
+                
+        #         data[i].plot(use_index=True)
+        #         plt.legend(toplot)
+        # #         plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
+        # #         plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
+        # #         plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
+                
+        #     start = start + winsize
+
+        plt.figure(figsize=(6, 3))
+        col = ['teal', 'slategrey', 'goldenrod']
+        mark = ['-', '--', '.-.']
+        for i, v in enumerate(toplot):
+            # data.plot(use_index=True, figsize=(10, 3), linewidth=0.75, alpha=0.66, color=['green', 'blue', 'red'])
+            plt.plot(data[v], mark[i], color=col[i])
+        #   plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
+        #   plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
+        #   plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
+
+
+        plt.legend(toplot)
+        for c in range(len(cluster_idx)):
+                
+            val = cluster_idx[c]
+            if clusters[c] == 0:
+                for v in range(winsize):
+                    plt.axvline(val+v, color="green", alpha=0.025)
+            if clusters[c] == 1:
+                for v in range(winsize):
+                    plt.axvline(val+v, color="white", alpha=0.00)
+            if clusters[c] == 2:
+                for v in range(winsize):
+                    plt.axvline(val+v, color="red", alpha=0.025)
+        plt.axvline(x=364, color='red')
+        # plt.text(305, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
+        plt.axvline(x=720, color='red')
+        # plt.text(670, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
+        plt.ylim(0, 1.3)
+        # plt.gcf().autofmt_xdate()
+        plt.legend(['$Z_{1}$', '$Z_{2}$', '$Z_{3}$'], loc='upper left', fontsize=50, prop=dict(weight='bold'))
+        # plt.title("Euclidean", fontsize=15)
+        plt.ylabel("window=90", fontsize=15)
+        # plt.xlabel('data points', fontsize=10)
+        plt.savefig("../res/synwin90EE.pdf")
+
+        plt.show()
