@@ -152,7 +152,6 @@ def plot_regimes(data, clusters, cluster_idx, winsize, toplot):
                 marker = '-'
         for i in range(len(toplot)):
 
-
             plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
 #           plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
 #           plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
