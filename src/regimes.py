@@ -160,6 +160,9 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
             if clusters[c] == 2:
                 for v in range(winsize):
                     plt.axvline(val+v, color="gray", alpha=0.15)
+            if clusters[c] == 3:
+                for v in range(winsize):
+                    plt.axvline(val+v, color="green", alpha=0.15)
             if c not in [0, 3]:
                 plt.axvline(x=val, color='black', linestyle='--', linewidth=0.75)
         # plt.axvline(x=365, color='red')
@@ -168,7 +171,6 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
         # plt.text(670, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
         plt.ylim(0, 1.35)
         # plt.gcf().autofmt_xdate()
-        # plt.legend(['$Z_{1}$', '$Z_{2}$', '$Z_{3}$'], loc='upper left', fontsize=6, prop=dict(weight='bold'))
         plt.legend(['GW$_{mb}$', 'GW$_{sg}$', 'T', 'Strain$_{ew}$', 'Strain$_{ns}$'], loc='upper right', frameon=True, ncol=5)
         plt.xlabel('')
         plt.ylabel('normalized values')
@@ -179,7 +181,6 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
         # Plot regimes in synthetic data
 
         toplot = ['Z1', 'Z3', 'Z5']
-        # toplot = ['Hs', 'P', 'W' ]
         colors = ['r', 'g', 'b', 'y', 'c']
 
         t = np.arange(0, cluster_idx[-1]+winsize)
@@ -227,12 +228,15 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
             if clusters[c] == 2:
                 for v in range(winsize):
                     plt.axvline(val+v, color="red", alpha=0.025)
+            if clusters[c] == 3:
+                for v in range(winsize):
+                    plt.axvline(val+v, color="yellow", alpha=0.025)
+        
         plt.axvline(x=364, color='red')
         # plt.text(305, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
         plt.axvline(x=720, color='red')
         # plt.text(670, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
         plt.ylim(0, 1.3)
-        # plt.gcf().autofmt_xdate()
         plt.legend(['$Z_{1}$', '$Z_{2}$', '$Z_{3}$'], loc='upper left', fontsize=50, prop=dict(weight='bold'))
         # plt.title("Euclidean", fontsize=15)
         plt.ylabel("window=90", fontsize=15)
