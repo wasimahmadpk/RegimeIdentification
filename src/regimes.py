@@ -24,7 +24,7 @@ win_size = pars.get("win_size")
 slidingwin_size = pars.get("slidingwin_size")
 plot_path = pars.get("plot_path")
 
-def pyriemann_clusters(data, k=2):
+def pyriemann_clusters(data, k):
     
     distortions = []
     inertias = []
@@ -58,78 +58,14 @@ def pyriemann_clusters(data, k=2):
     
     return labels
 
-def get_regimes2(data, wsize, metric):
-    
-    winsize = wsize
-    start = 0
-    covmat = []
-    columns = data.columns
-    dim = len(columns)
-    cluster_idx = []
- 
-    while start+winsize < len(data):
-        cluster_idx.append(start)
-#         print(f"Data shape: {data.shape}")
-        data_batch = data[start: start + winsize]
-#         print(f"Data batch: {data_batch.shape}")
-        ls_data_batch = []
-        
-        for i in range(len(columns)):
-            ls_data_batch.append(data_batch[columns[i]].values.tolist())
 
-        cov = np.cov(np.array(ls_data_batch))
-#         print(f"Covariance of {columns[14]} with other variables: {cov[14]}")
-#         flat_cov = np.concatenate(cov).ravel().tolist()
-        upper = np.triu(cov, k=0)
-#         print(f"Length of Cov matrix: {len(upper[upper!=0])}")
-        mask = np.triu_indices(dim)
-        newupp = list(upper[mask])
-        upp = list(upper[upper!=0])
-        
-#         mean_v = list(np.mean(np.array(ls_data_batch), axis=1))
-        
-        feat = stats.describe(np.array(ls_data_batch), axis=1)
-        mean_val = feat.mean.tolist()
-        skewness = feat.skewness.tolist()
-        kurtosis = feat.kurtosis.tolist()
-        
-        # plt.plot(prep.normalize(newupp, 'std'))
-        # plt.show()
-        mix_feat = newupp + mean_val
-#         print(f"Length of features pool: {len(mix_feat)}")
-        covmat.append(mix_feat)
-        start = start + winsize
-#    
-    kmeans = KMeans(n_clusters=3, random_state=0, n_init=1).fit(covmat)
-    clusters = list(kmeans.labels_)
-#     print(f"Clusters: {list(kmeans.labels_)}")
-#     print(f"Clusters indecis: {cluster_idx}")
-    
-    clusters2 = pyriemann_clusters(cov, k=2)
-
-    clusters_extended = []
-    for i in range(len(clusters)):
-
-        val = clusters[i]
-        for j in range(slidingwin_size):
-            clusters_extended.append(val)
-    
-    newdf = data.iloc[:len(clusters_extended), :].copy()
-    newdf['Clusters'] = clusters_extended
-
-    dfs = []
-    for c in range(len(list(set(clusters)))):
-        dfs.append(newdf.loc[newdf['Clusters'] == list(set(clusters))[c]])
-
-    return dfs, clusters, cluster_idx, newdf
-
-def get_regimes(data, wsize, dist_metric):
+def get_regimes(data, wsize, k, dist_metric):
     
     covmat, covar, cluster_idx = getSPDMs(data, wsize)
     
     if dist_metric == 'Euclidean':
         
-        kmeans = KMeans(n_clusters=3, random_state=0, n_init=1).fit(covmat)
+        kmeans = KMeans(n_clusters=k, random_state=0, n_init=1).fit(covmat)
         clusters = list(kmeans.labels_)
         print(f"Clusters: {list(kmeans.labels_)}")
     
@@ -152,7 +88,7 @@ def get_regimes(data, wsize, dist_metric):
     
     else:
 #         clusters = cluster(np.array(covmat))
-        clusters = pyriemann_clusters(np.array(covar))
+        clusters = pyriemann_clusters(np.array(covar), k)
 #     
 
     clusters_extended = []
@@ -236,7 +172,7 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
         plt.legend(['GW$_{mb}$', 'GW$_{sg}$', 'T', 'Strain$_{ew}$', 'Strain$_{ns}$'], loc='upper right', frameon=True, ncol=5)
         plt.xlabel('')
         plt.ylabel('normalized values')
-        plt.savefig("../res/georegimes2.pdf", bbox_inches='tight')
+        # plt.savefig("../res/georegimes2.pdf", bbox_inches='tight')
         plt.show()
 
     else:
