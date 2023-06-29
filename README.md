@@ -21,7 +21,6 @@ We test our method on synthetically generated multivariate nonlinear non-station
 ## Code
 `src/regimes.py` is our main file, where we segment time series into batches that have specific dynamics.
 - `src/regimes_identification.ipynb` is jupyter notebook for data analysis and segmentation.
-- `src/plot_regimes.py` for visualization of time series segmention.
 - `datasets/` contains the generated synthetic data and real dataset.
 
 
