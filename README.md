@@ -32,6 +32,7 @@ clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, k, metricR)
 ```
 
 ```pyton
+# plot multivariate time-series with identified segments
 regimes.plot_regimes(data, clusters, cluster_idx, winsize, dtype='synthetic')
 ```
 
