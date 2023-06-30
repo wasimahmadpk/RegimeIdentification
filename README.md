@@ -43,7 +43,7 @@ regimes.plot_regimes(data, clusters, cluster_idx, winsize, dtype='synthetic')
 ```
 
 <p align="center">
-<img src="res/test.png" width="800" height="300" />
+<img src="res/test.png" width="800" height="350" />
 </p>
 
 
