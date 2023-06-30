@@ -20,7 +20,9 @@ We extract covariances matrics $\Sigma_i$ $i=1,...,n$ using a sliding window of 
 # libraries
 import regimes
 import pandas as pd
+```
 
+```python
 # Read synthetically generated time series
 data = pd.read_csv(r'../datasets/synthetic_datac.csv')
 
