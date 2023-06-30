@@ -25,16 +25,13 @@ import pandas as pd
 ```python
 # Read synthetically generated time series
 data = pd.read_csv(r'../datasets/synthetic_datac.csv')
-
 # Desired number of segments (k)
 k = 2                
 # sliding window size
 winsize = 150
-
 # Distance measure
 metricE = 'Euclidean'
 metricR = 'Riemannian'
-
 # Retrieve segments labels along with the corresponding indecis
 clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, k, metricR)
 ```
