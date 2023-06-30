@@ -10,6 +10,14 @@ We extract covariances matrics $\Sigma_i$ $i=1,...,n$ using a sliding window of 
 2. Since the covariance matrices have high nonlinear geometry therefore we use Riemannian distance as a metric for estimating the distance between regimes.
 
 
+```python 
+k = 2
+winsize = 155 # 155
+metricE = 'Euclidean'
+metricR = 'Riemannian'
+clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, k, metricR)
+```
+
 <p align="center">
 <img src="res/test.png" width=100% />
 </p>
