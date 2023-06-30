@@ -11,6 +11,13 @@ We extract covariances matrics $\Sigma_i$ $i=1,...,n$ using a sliding window of 
 
 
 ```python 
+# libraries
+import regimes
+import pandas as pd
+
+# Read synthetically generated time series
+# data = pd.read_csv(r'../datasets/synthetic_datac.csv')
+
 k = 2
 winsize = 155 # 155
 metricE = 'Euclidean'
