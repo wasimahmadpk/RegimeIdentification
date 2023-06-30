@@ -31,7 +31,7 @@ k = 2
 winsize = 150
 # Distance measure (Riemannian, Euclidean)
 dist_metric = 'Riemannian'
-# Retrieve segments labels along with the corresponding indecis
+# Retrieve segments labels along with the corresponding indices
 clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, k, dist_metric)
 ```
 
