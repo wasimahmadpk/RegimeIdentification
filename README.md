@@ -10,6 +10,12 @@ We extract covariances matrics $\Sigma_i$ $i=1,...,n$ using a sliding window of 
 2. Since the covariance matrices have high nonlinear geometry therefore we use Riemannian distance as a metric for estimating the distance between regimes.
 
 
+## Code
+`src/regimes.py` is our main file, where we segment time series into batches that have specific dynamics.
+- `src/regimes_identification.ipynb` is jupyter notebook for data analysis and segmentation.
+- `datasets/` contains the generated synthetic data and real dataset.
+
+
 ```python 
 # libraries
 import regimes
@@ -40,14 +46,9 @@ regimes.plot_regimes(data, clusters, cluster_idx, winsize, dtype='synthetic')
 <img src="res/test.png" width=100% />
 </p>
 
+
 ## Data
 We test our method on synthetically generated multivariate nonlinear non-stationary time series as well as geo-climate time series which is recorded at Moxa Geodynamic Observatory (MGO) Jena. The data can be found under `datasets/` directory. The synthetic data is generated using file `src/synthetic_dataset.py`. 
-
-
-## Code
-`src/regimes.py` is our main file, where we segment time series into batches that have specific dynamics.
-- `src/regimes_identification.ipynb` is jupyter notebook for data analysis and segmentation.
-- `datasets/` contains the generated synthetic data and real dataset.
 
 
 ## Dependencies
