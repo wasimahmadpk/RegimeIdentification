@@ -29,11 +29,10 @@ data = pd.read_csv(r'../datasets/synthetic_datac.csv')
 k = 2                
 # sliding window size
 winsize = 150
-# Distance measure
-metricE = 'Euclidean'
-metricR = 'Riemannian'
+# Distance measure (Riemannian, Euclidean)
+dist_metric = 'Riemannian'
 # Retrieve segments labels along with the corresponding indecis
-clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, k, metricR)
+clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, k, dist_metric)
 ```
 
 ```python
