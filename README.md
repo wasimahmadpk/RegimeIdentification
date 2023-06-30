@@ -6,7 +6,7 @@ This repository contains code for our work on segmentation of multivariate non-s
 ## Overview
 
 We extract covariances matrics $\Sigma_i$ $i=1,...,n$ using a sliding window of size $s$. The pool of the covariances matrices is given to clustering algorithm for segmentation.
-1. We use KMeans algorithm to distinguish different dyanmices in the time series.
+1. We use KMeans algorithm with Riemannian and Euclidan as distance measure to distinguish different dynamics in the multivariate non-stationary time series.
 2. Since the covariance matrices have high nonlinear geometry therefore we use Riemannian distance as a metric for estimating the distance between regimes.
 
 
