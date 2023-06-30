@@ -46,7 +46,7 @@ regimes.plot_regimes(data, clusters, cluster_idx, winsize, dtype='synthetic')
 
 
 ## Data
-We test our method on synthetically generated multivariate nonlinear non-stationary time series as well as geo-climate time series which is recorded at Moxa Geodynamic Observatory (MGO) Jena. The data can be found under `datasets/` directory. The synthetic data is generated using file `src/synthetic_dataset.py`. 
+We test our method on synthetically generated multivariate nonlinear non-stationary time series as well as geo-climate time series which is recorded at Moxa Geodynamic Observatory (MGO) Jena. The data can be found under `datasets/` directory. 
 
 
 ## Dependencies
