@@ -16,12 +16,17 @@ import regimes
 import pandas as pd
 
 # Read synthetically generated time series
-# data = pd.read_csv(r'../datasets/synthetic_datac.csv')
+data = pd.read_csv(r'../datasets/synthetic_datac.csv')
 
-k = 2
-winsize = 155 # 155
+# Desired number of segments (k)
+k = 2                
+
+winsize = 155
+
+# Distance measure
 metricE = 'Euclidean'
 metricR = 'Riemannian'
+
 clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, k, metricR)
 ```
 
