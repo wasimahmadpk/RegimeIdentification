@@ -27,7 +27,12 @@ winsize = 155
 metricE = 'Euclidean'
 metricR = 'Riemannian'
 
+# Retrieve segments labels along with the corresponding indecis
 clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, k, metricR)
+```
+
+```pyton
+regimes.plot_regimes(data, clusters, cluster_idx, winsize, dtype='synthetic')
 ```
 
 <p align="center">
