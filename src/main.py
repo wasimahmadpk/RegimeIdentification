@@ -65,7 +65,7 @@ def pyriemann_clusters(data):
         print(labels)
 
 
-    #     Find optimal number of regimes
+    # Find optimal number of regimes
     
     #     for k in K:
     #         kmeans = KMeans(k, 'riemann', tol=1e-3, init='random')
