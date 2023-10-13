@@ -152,17 +152,13 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
 
             val = cluster_idx[c]
             if clusters[c] == 0:
-                for v in range(winsize):
-                    plt.axvline(val+v, color="gray", alpha=0.1)
+                plt.axvspan(val, val+winsize, color='gray', alpha=0.1)
             if clusters[c] == 1:
-                for v in range(winsize):
-                    plt.axvline(val+v, color="white", alpha=0.00)
+                plt.axvspan(val, val+winsize, color='white', alpha=0.1)    
             if clusters[c] == 2:
-                for v in range(winsize):
-                    plt.axvline(val+v, color="gray", alpha=0.15)
+                plt.axvspan(val, val+winsize, color='gray', alpha=0.1)        
             if clusters[c] == 3:
-                for v in range(winsize):
-                    plt.axvline(val+v, color="green", alpha=0.15)
+                plt.axvspan(val, val+winsize, color='green', alpha=0.1)    
             if c not in [0, 3]:
                 plt.axvline(x=val, color='black', linestyle='--', linewidth=0.75)
         # plt.axvline(x=365, color='red')
@@ -219,18 +215,15 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
         for c in range(len(cluster_idx)):
                 
             val = cluster_idx[c]
+            print(f'{val} to {val+winsize}')
             if clusters[c] == 0:
-                for v in range(winsize):
-                    plt.axvline(val+v, color="green", alpha=0.025)
+                plt.axvspan(val, val+winsize, facecolor='green', alpha=0.15)    
             if clusters[c] == 1:
-                for v in range(winsize):
-                    plt.axvline(val+v, color="white", alpha=0.00)
+                plt.axvspan(val, val+winsize, facecolor='white', alpha=0.25)  
             if clusters[c] == 2:
-                for v in range(winsize):
-                    plt.axvline(val+v, color="red", alpha=0.025)
+                plt.axvspan(val, val+winsize, facecolor='red', alpha=0.15)  
             if clusters[c] == 3:
-                for v in range(winsize):
-                    plt.axvline(val+v, color="yellow", alpha=0.025)
+                plt.axvspan(val, val+winsize, facecolor='yellow', alpha=0.15)  
         
         plt.axvline(x=364, color='red')
         # plt.text(305, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
