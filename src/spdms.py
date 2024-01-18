@@ -16,19 +16,14 @@ def getSPDMs(data, wsize):
  
     while start+winsize < len(data)-1:
         cluster_idx.append(start)
-#         print(f"Data shape: {data.shape}")
         data_batch = data[start: start + winsize]
-#         print(f"Data batch: {data_batch.shape}")
         ls_data_batch = []
         
         for i in range(len(columns)):
             ls_data_batch.append(data_batch[columns[i]].values.tolist())
 
         cov = np.cov(np.array(ls_data_batch))
-#         print(f"Covariance of {columns[14]} with other variables: {cov[14]}")
-#         flat_cov = np.concatenate(cov).ravel().tolist()
         upper = np.triu(cov, k=0)
-#         print(f"Length of Cov matrix: {len(upper[upper!=0])}")
         mask = np.triu_indices(dim)
         newupp = list(upper[mask])
         upp = list(upper[upper!=0])

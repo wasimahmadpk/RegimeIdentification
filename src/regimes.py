@@ -8,8 +8,10 @@ from spdms import getSPDMs
 # import statsmodels.api as sm
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+from dimreduce import reduce_dimension
 # from sklearn.feature_selection import mutual_info_regression
 from statsmodels.tsa.stattools import adfuller
+
 plt.rcParams['figure.dpi'] = 200
 
 
@@ -59,55 +61,71 @@ def pyriemann_clusters(data, k):
     return labels
 
 
-def get_regimes(data, wsize, k, dist_metric):
+def get_regimes(data, wsize, k, dist_metric, dim):
     
-    covmat, covar, cluster_idx = getSPDMs(data, wsize)
-    
-    if dist_metric == 'Euclidean':
+
+    if dim== 'full':
+        covmat, covar, cluster_idx = getSPDMs(data, wsize)
         
-        kmeans = KMeans(n_clusters=k, random_state=0, n_init=1).fit(covmat)
-        clusters = list(kmeans.labels_)
-        print(f"Clusters: {list(kmeans.labels_)}")
-    
-#     for k in K:
-#             kmeans = KMeans(n_clusters=k, random_state=0, n_init=1).fit(covmat)
-#             clusters = list(kmeans.labels_)
-#             print(f"Clusters: {list(kmeans.labels_)}")
+        if dist_metric == 'Euclidean':
+            
+            kmeans = KMeans(n_clusters=k, random_state=0, n_init=1).fit(covmat)
+            clusters = list(kmeans.labels_)
+            print(f"Clusters: {list(kmeans.labels_)}")
         
-#             distortions.append(sum(np.min(cdist(covmat, kmeans.cluster_centers_, 'mahalanobis'), axis=1)) / np.array(covmat).shape[0])
-#             inertias.append(kmeans.inertia_)
-#             mapping1[k] = sum(np.min(cdist(covmat, kmeans.cluster_centers_, 'mahalanobis'), axis=1)) / np.array(covmat).shape[0]
-#             mapping2[k] = kmeans.inertia_
+        else:
+            clusters = pyriemann_clusters(np.array(covar), k)     
+
+        clusters_extended = []
+        for i in range(len(clusters)):
+
+            val = clusters[i]
+            for j in range(slidingwin_size):
+                clusters_extended.append(val)
         
-#         #   The elbow method for optimal number of clusters
-#         plt.plot(K, inertias, 'bx-')
-#         plt.xlabel('Values of K')
-#         plt.ylabel('Distortion')
-#         plt.title('The Elbow Method using Distortion')
-#         plt.show()
-    
+        # newdf = data.iloc[:len(clusters_extended), :].copy()
+        # newdf['Clusters'] = clusters_extended
+
+        dfs = []
+        # for c in range(len(list(set(clusters)))):
+        #     dfs.append(newdf.loc[newdf['Clusters'] == list(set(clusters))[c]])
+
+
+        print(f"Clusters indecis: {cluster_idx}")
+   
     else:
-#         clusters = cluster(np.array(covmat))
-        clusters = pyriemann_clusters(np.array(covar), k)
-#     
 
-    clusters_extended = []
-    for i in range(len(clusters)):
+        covmat, covar, cluster_idx = getSPDMs(data, wsize)    
+        covar = np.transpose([covar])
+        rdata = reduce_dimension(covar, int(dim)) 
+        covar = np.transpose(rdata[:, :, :, 0])
+        if dist_metric == 'Euclidean':
+            
+            kmeans = KMeans(n_clusters=k, random_state=0, n_init=1).fit(covmat)
+            clusters = list(kmeans.labels_)
+            print(f"Clusters: {list(kmeans.labels_)}")
+        
+        else:
+            clusters = pyriemann_clusters(covar, k)     
 
-        val = clusters[i]
-        for j in range(slidingwin_size):
-            clusters_extended.append(val)
-    
-    newdf = data.iloc[:len(clusters_extended), :].copy()
-    newdf['Clusters'] = clusters_extended
+        clusters_extended = []
+        for i in range(len(clusters)):
 
-    dfs = []
-    for c in range(len(list(set(clusters)))):
-        dfs.append(newdf.loc[newdf['Clusters'] == list(set(clusters))[c]])
+            val = clusters[i]
+            for j in range(slidingwin_size):
+                clusters_extended.append(val)
+        
+        # newdf = data.iloc[:len(clusters_extended), :].copy()
+        # newdf['Clusters'] = clusters_extended
+
+        dfs = []
+        # for c in range(len(list(set(clusters)))):
+        #     dfs.append(newdf.loc[newdf['Clusters'] == list(set(clusters))[c]])
 
 
-    print(f"Clusters indecis: {cluster_idx}")
-    return clusters, cluster_idx, dfs, clusters, cluster_idx, newdf
+        print(f"Clusters indecis: {cluster_idx}")
+        
+    return clusters, cluster_idx, dfs
 
 def get_reduced_set(df):
     
@@ -146,7 +164,7 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
         #         plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
         #         plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
 
-        data[toplot].plot(use_index=True, cmap='tab10', figsize=(9, 3), linewidth=0.75)
+        data[toplot].plot(use_index=True, cmap='tab10', figsize=(9, 3), linewidth=0.66)
         plt.legend(toplot)
         for c in range(len(cluster_idx)):
 
