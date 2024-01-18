@@ -4,21 +4,18 @@ import pandas as pd
 import seaborn as sns
 from scipy import stats
 from spdms import getSPDMs
+from sklearn import metrics
 # from sklearn import metrics
 # import statsmodels.api as sm
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from dimreduce import reduce_dimension
-# from sklearn.feature_selection import mutual_info_regression
+from pyriemann.clustering import Kmeans
+from scipy.spatial.distance import cdist
 from statsmodels.tsa.stattools import adfuller
 
 plt.rcParams['figure.dpi'] = 200
 
-
-from sklearn.cluster import KMeans
-from pyriemann.clustering import Kmeans
-from sklearn import metrics
-from scipy.spatial.distance import cdist
 
 # Parameters
 pars = parameters.get_syn_params()
@@ -233,7 +230,7 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
         for c in range(len(cluster_idx)):
                 
             val = cluster_idx[c]
-            print(f'{val} to {val+winsize}')
+            # print(f'{val} to {val+winsize}')
             if clusters[c] == 0:
                 plt.axvspan(val, val+winsize, facecolor='green', alpha=0.15)    
             if clusters[c] == 1:
