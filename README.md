@@ -29,10 +29,15 @@ data = pd.read_csv(r'../datasets/synthetic_datac.csv')
 k = 2                
 # sliding window size
 winsize = 150
+
 # Distance measure (Riemannian, Euclidean)
 dist_metric = 'Riemannian'
+
+# dim=n for reducing the dimension of covariance matrices to nxn. Use dim='full' for no dimensionality reduction. 
+dim = 'full' 
+
 # Retrieve segments labels along with the corresponding indices
-clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, k, dist_metric)
+clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, k, dist_metric, dim)
 ```
 
 ```python
