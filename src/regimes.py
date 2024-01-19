@@ -89,7 +89,7 @@ def get_regimes(data, wsize, k, dist_metric, dim='full'):
         # for c in range(len(list(set(clusters)))):
         #     dfs.append(newdf.loc[newdf['Clusters'] == list(set(clusters))[c]])
     zip_regimes = list(zip(clusters, cluster_idx))
-    print(f"Regimes: {zip_regimes}")
+    print("Regimes:" + " ".join(map(str, zip_regimes)))
 
     return clusters, cluster_idx, dfs
    
