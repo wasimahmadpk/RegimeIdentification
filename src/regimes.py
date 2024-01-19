@@ -34,7 +34,6 @@ def pyriemann_clusters(data, k):
     kmeans.fit(data)
     labels = kmeans.predict(data)
     centroids = kmeans.centroids
-    print(labels)
     
 #     for k in K:
 #         kmeans = KMeans(k, 'riemann', tol=1e-3, init='random')
@@ -58,8 +57,7 @@ def pyriemann_clusters(data, k):
     return labels
 
 
-def get_regimes(data, wsize, k, dist_metric, dim):
-    
+def get_regimes(data, wsize, k, dist_metric, dim='full'):
 
     flat_cov_mat, cov_mat, cluster_idx = getSPDMs(data, wsize)    
     
@@ -73,7 +71,6 @@ def get_regimes(data, wsize, k, dist_metric, dim):
             
         kmeans = KMeans(n_clusters=k, random_state=0, n_init=1).fit(flat_cov_mat)
         clusters = list(kmeans.labels_)
-        print(f"Clusters: {list(kmeans.labels_)}")
         
     else:
         clusters = pyriemann_clusters(np.array(cov_mat), k)     
@@ -91,8 +88,8 @@ def get_regimes(data, wsize, k, dist_metric, dim):
     dfs = []
         # for c in range(len(list(set(clusters)))):
         #     dfs.append(newdf.loc[newdf['Clusters'] == list(set(clusters))[c]])
-
-    print(f"Clusters indecis: {cluster_idx}")
+    zip_regimes = list(zip(clusters, cluster_idx))
+    print(f"Regimes: {zip_regimes}")
 
     return clusters, cluster_idx, dfs
    
@@ -122,17 +119,9 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
         t = np.arange(0, cluster_idx[-1]+winsize)
         start = 0
 
-
         plt.figure(figsize=(12, 4))
         col = ['teal', 'slategrey', 'goldenrod']
         mark = ['-', '--', '.-.']
-
-        # for i, v in enumerate(toplot):
-        #         data.plot(use_index=True, figsize=(10, 3), linewidth=0.75)
-        #         plt.plot(data[v], mark[i], color=col[i])
-        #         plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
-        #         plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
-        #         plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
 
         data[toplot].plot(use_index=True, cmap='tab10', figsize=(9, 3), linewidth=0.66)
         plt.legend(toplot)
@@ -170,35 +159,13 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
         t = np.arange(0, cluster_idx[-1]+winsize)
         start = 0
 
-        # for c in range(len(clusters)):
-            
-        #     if clusters[c] == 0:
-        #             marker = '-'
-        #     elif clusters[c] == 1:
-        #             marker = '-'
-        #     elif clusters[c] == 2:
-        #             marker = '-'
-        #     for i in toplot:
-                
-        #         data[i].plot(use_index=True)
-        #         plt.legend(toplot)
-        # #         plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
-        # #         plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
-        # #         plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
-                
-        #     start = start + winsize
-
         plt.figure(figsize=(6, 3))
         col = ['teal', 'slategrey', 'goldenrod']
         mark = ['-', '--', '.-.']
+
         for i, v in enumerate(toplot):
-            # data.plot(use_index=True, figsize=(10, 3), linewidth=0.75, alpha=0.66, color=['green', 'blue', 'red'])
             plt.plot(data[v], mark[i], color=col[i])
-        #   plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
-        #   plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
-        #   plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
-
-
+   
         plt.legend(toplot)
         for c in range(len(cluster_idx)):
                 
