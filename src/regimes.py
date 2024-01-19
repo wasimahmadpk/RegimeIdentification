@@ -108,11 +108,9 @@ def plot_regimes(data, clusters, cluster_idx, winsize, dtype='real'):
      
     if dtype == 'real':
           
-        # # Plot regimes in real data
-
-        # toplot = [ 'rain','strain_ns_corrected', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
+        # Plot regimes in real data
+  
         toplot = ['gw_mb', 'gw_sg', 'temperature_outside', 'strain_ew_corrected', 'strain_ns_corrected']
-        # toplot = ['gw_mb', 'gw_sg', 'gw_west', 'gw_south', 'strain_ns_corrected']
         # toplot = ['Hs', 'P', 'W' ]
         colors = ['r', 'g', 'b', 'y', 'c']
 
