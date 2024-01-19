@@ -8,8 +8,8 @@ def getSPDMs(data, wsize):
     
     winsize = wsize
     start = 0
-    covmat = []
-    covar = []
+    flat_cov_mat = []
+    cov_mat = []
     columns = data.columns
     dim = len(columns) - 1
     cluster_idx = []
@@ -38,10 +38,8 @@ def getSPDMs(data, wsize):
 #         plt.plot(helper.normalize(newupp, 'std'))
 #         plt.show()
         mix_feat = newupp 
-#         print(f"Length of features pool: {len(mix_feat)}")
-        covmat.append(mix_feat)
-        covar.append(cov)
-#         print(covmat)
+        flat_cov_mat.append(mix_feat)
+        cov_mat.append(cov)
         start = start + winsize
 
-    return covmat, covar, cluster_idx
+    return flat_cov_mat, cov_mat, cluster_idx

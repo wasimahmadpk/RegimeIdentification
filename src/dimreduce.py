@@ -69,7 +69,7 @@ def ManoptOptimization(A,m):
     return Xopt
 
 def reduce_dimension(covseqs, m):
-    print(f'Covariance matrix shape: {covseqs.shape}')
+    
     n,n,T,L = covseqs.shape    
     traj = np.zeros((m, m, T, L))
     B = np.zeros((n,m))

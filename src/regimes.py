@@ -61,68 +61,41 @@ def pyriemann_clusters(data, k):
 def get_regimes(data, wsize, k, dist_metric, dim):
     
 
-    if dim== 'full':
-        covmat, covar, cluster_idx = getSPDMs(data, wsize)
+    flat_cov_mat, cov_mat, cluster_idx = getSPDMs(data, wsize)    
+    
+    if dim != 'full':
+        assert int(dim) < len(data.columns), f"Reduced dimension:{int(dim)} is greater than full dimension:{len(data.columns)} ."
+        cov_mat = np.transpose([cov_mat])
+        rdata = reduce_dimension(cov_mat, int(dim)) 
+        cov_mat = np.transpose(rdata[:, :, :, 0])
         
-        if dist_metric == 'Euclidean':
+    if dist_metric == 'Euclidean':
             
-            kmeans = KMeans(n_clusters=k, random_state=0, n_init=1).fit(covmat)
-            clusters = list(kmeans.labels_)
-            print(f"Clusters: {list(kmeans.labels_)}")
+        kmeans = KMeans(n_clusters=k, random_state=0, n_init=1).fit(flat_cov_mat)
+        clusters = list(kmeans.labels_)
+        print(f"Clusters: {list(kmeans.labels_)}")
         
-        else:
-            clusters = pyriemann_clusters(np.array(covar), k)     
-
-        clusters_extended = []
-        for i in range(len(clusters)):
-
-            val = clusters[i]
-            for j in range(slidingwin_size):
-                clusters_extended.append(val)
-        
-        # newdf = data.iloc[:len(clusters_extended), :].copy()
-        # newdf['Clusters'] = clusters_extended
-
-        dfs = []
-        # for c in range(len(list(set(clusters)))):
-        #     dfs.append(newdf.loc[newdf['Clusters'] == list(set(clusters))[c]])
-
-
-        print(f"Clusters indecis: {cluster_idx}")
-   
     else:
+        clusters = pyriemann_clusters(np.array(cov_mat), k)     
 
-        covmat, covar, cluster_idx = getSPDMs(data, wsize)    
-        covar = np.transpose([covar])
-        rdata = reduce_dimension(covar, int(dim)) 
-        covar = np.transpose(rdata[:, :, :, 0])
-        if dist_metric == 'Euclidean':
-            
-            kmeans = KMeans(n_clusters=k, random_state=0, n_init=1).fit(covmat)
-            clusters = list(kmeans.labels_)
-            print(f"Clusters: {list(kmeans.labels_)}")
-        
-        else:
-            clusters = pyriemann_clusters(covar, k)     
+    clusters_extended = []
+    for i in range(len(clusters)):
 
-        clusters_extended = []
-        for i in range(len(clusters)):
-
-            val = clusters[i]
-            for j in range(slidingwin_size):
-                clusters_extended.append(val)
+        val = clusters[i]
+        for j in range(slidingwin_size):
+            clusters_extended.append(val)
         
         # newdf = data.iloc[:len(clusters_extended), :].copy()
         # newdf['Clusters'] = clusters_extended
 
-        dfs = []
+    dfs = []
         # for c in range(len(list(set(clusters)))):
         #     dfs.append(newdf.loc[newdf['Clusters'] == list(set(clusters))[c]])
 
+    print(f"Clusters indecis: {cluster_idx}")
 
-        print(f"Clusters indecis: {cluster_idx}")
-        
     return clusters, cluster_idx, dfs
+   
 
 def get_reduced_set(df):
     
