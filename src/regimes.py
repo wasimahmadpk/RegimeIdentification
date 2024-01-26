@@ -30,6 +30,62 @@ slidingwin_size = pars.get("slidingwin_size")
 plot_path = pars.get("plot_path")
 
 
+def read_file(file_path):
+    # Check the file extension
+    file_extension = file_path.split('.')[-1].lower()
+
+    # Read the file based on the extension
+    if file_extension in ['xls', 'xlsx']:
+        data = pd.read_excel(file_path)
+    elif file_extension == 'csv':
+        data = pd.read_csv(file_path)
+    elif file_extension == 'txt':
+        data = pd.read_csv(file_path, sep=' ')
+    elif file_extension == 'h5':
+        data = pd.read_hdf(file_path)
+    else:
+        raise ValueError(f"Unsupported file extension: {file_extension}")
+
+    return data
+
+def find_time_related_columns(file_path):
+    # Read the text file into a DataFrame
+    df = read_file(file_path)
+
+    # List of potential time-related column names
+    time_column_names = ['date', 'Date', 'timestep', 'timestamp']
+
+    # Check for the presence of time-related columns
+    time_columns = [col for col in df.columns if col.lower() in time_column_names]
+
+    # Return a tuple with a boolean and the list of time-related columns
+    return bool(time_columns), time_columns
+
+
+def shift_and_fill_mean(df, n):
+    """
+    Shifts the values in a single-column DataFrame and fills missing values with the mean.
+
+    Parameters:
+    - df: Original DataFrame with a single column.
+    - n: Number of points to shift.
+
+    Returns:
+    - new_df: DataFrame with two columns, where missing values are filled with the mean.
+    """
+
+    # Create a new DataFrame with two columns by shifting the values
+    new_df = pd.DataFrame({
+        'col1': df[df.columns[0]].shift(-n),
+        'col2': df[df.columns[0]]
+    })
+
+    # Fill NaN values in both columns with the mean of the original column
+    new_df.fillna(df[df.columns[0]].mean(), inplace=True)
+
+    return new_df
+
+
 def find_optimal_k(data):
     # Suppress warnings
     warnings.filterwarnings("ignore")
@@ -112,7 +168,7 @@ def get_reduced_set(df):
     return reduced_df
 
 
-def plot_regimes(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
+def visualize_regimes(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
      
     if dtype == 'real':
           
