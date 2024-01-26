@@ -25,7 +25,7 @@ import pandas as pd
 ```python
 # Read synthetically generated time series
 data = pd.read_csv(r'../datasets/synthetic_datac.csv')
-# Desired number of segments (k)
+# Desired number of segments (k). Set k=None to let the algorithm aumotically find opitmal k.
 k = 2                
 # sliding window size
 winsize = 150
@@ -37,7 +37,7 @@ dist_metric = 'Riemannian'
 dim = 'full' 
 
 # Retrieve segments labels along with the corresponding indices
-clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, k, dist_metric, dim)
+clusters, cluster_idx, *_ = regimes.get_regimes(data, winsize, dist_metric, k, dim)
 ```
 
 ```python

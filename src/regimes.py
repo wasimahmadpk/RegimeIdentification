@@ -1,3 +1,4 @@
+import random
 import parameters
 import numpy as np
 import pandas as pd
@@ -14,6 +15,10 @@ from dimreduce import reduce_dimension
 from pyriemann.clustering import Kmeans
 from scipy.spatial.distance import cdist
 from statsmodels.tsa.stattools import adfuller
+from yellowbrick.cluster import KElbowVisualizer
+
+import warnings
+from contextlib import suppress
 
 plt.rcParams['figure.dpi'] = 200
 
@@ -23,6 +28,24 @@ pars = parameters.get_syn_params()
 win_size = pars.get("win_size")
 slidingwin_size = pars.get("slidingwin_size")
 plot_path = pars.get("plot_path")
+
+
+def find_optimal_k(data):
+    # Suppress warnings
+    warnings.filterwarnings("ignore")
+
+    # Instantiate the clustering model and visualizer
+    model = KMeans()
+
+    # Suppress exceptions
+    with suppress(AttributeError):
+        visualizer = KElbowVisualizer(model, k=(2, 6), metric='calinski_harabasz', timings=False)
+        visualizer.fit(data)  # Fit the data to the visualizer
+
+        # Retrieve the optimal k
+        optimal_k = visualizer.elbow_value_
+
+        return optimal_k
 
 def pyriemann_clusters(data, k):
     
@@ -36,37 +59,21 @@ def pyriemann_clusters(data, k):
     labels = kmeans.predict(data)
     centroids = kmeans.centroids
     
-#     for k in K:
-#         kmeans = KMeans(k, 'riemann', tol=1e-3, init='random')
-#         kmeans.fit(data)
-#         labels = kmeans.predict(data)
-#         centroids = kmeans.centroids
-#         print(labels)
-        
-#         distortions.append(sum(np.min(cdist(data, kmeans.centroids, 'euclidean'), axis=1)) / np.array(data).shape[0])
-#         inertias.append(kmeans.inertia_)
-#         mapping1[k] = sum(np.min(cdist(data, kmeans.centroids, 'euclidean'), axis=1)) / np.array(data).shape[0]
-#         mapping2[k] = kmeans.inertia_
-        
-#     #   The elbow method for optimal number of clusters
-#     plt.plot(K, inertias, 'bx-')
-#     plt.xlabel('Values of K')
-#     plt.ylabel('Distortion')
-#     plt.title('The Elbow Method using Distortion')
-#     plt.show()
-    
     return labels
 
 
-def get_regimes(data, wsize, k, dist_metric, dim='full'):
+def get_regimes(data, wsize, dist_metric, k=None, dim='full'):
 
     flat_cov_mat, cov_mat, cluster_idx = getSPDMs(data, wsize)    
     
-    if dim != 'full':
+    if dim.lower() != 'full':
         assert int(dim) < len(data.columns), f"Reduced dimension:{int(dim)} is greater than full dimension:{len(data.columns)} ."
         cov_mat = np.transpose([cov_mat])
         rdata = reduce_dimension(cov_mat, int(dim)) 
         cov_mat = np.transpose(rdata[:, :, :, 0])
+    
+    if k is None:
+        k = find_optimal_k(data)
         
     if dist_metric == 'Euclidean':
             
@@ -115,7 +122,7 @@ def plot_regimes(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
         t = np.arange(0, cluster_idx[-1]+winsize)
         start = 0
 
-        plt.figure(figsize=(12, 4))
+        plt.figure(figsize=(15, 4))
         col = ['teal', 'slategrey', 'goldenrod']
         mark = ['-', '--', '.-.']
 
@@ -129,20 +136,20 @@ def plot_regimes(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
             val = cluster_idx[c]
             
             if prev != curr:
-                plt.axvline(x=val, color='red', linestyle='--', linewidth=0.75)
+                plt.axvline(x=data.index[val], color='red', linestyle='--', linewidth=0.75)
                 prev = curr
             
             if clusters[c] == 0:
-                plt.axvspan(val, val+winsize, color='white', alpha=0.5)
+                plt.axvspan(data.index[val], data.index[val+winsize], color='white', alpha=0.5)
             
             if clusters[c] == 1:
-                plt.axvspan(val, val+winsize, color='gray', alpha=0.6)    
+                plt.axvspan(data.index[val], data.index[val+winsize], color='gray', alpha=0.25)    #random.choice(['green', 'blue', 'red'])
             
             if clusters[c] == 2:
-                plt.axvspan(val, val+winsize, color='blue', alpha=0.2)    
+                plt.axvspan(data.index[val], data.index[val+winsize], color='blue', alpha=0.2)    
             
             if clusters[c] == 3:
-                plt.axvspan(val, val+winsize, color='green', alpha=0.5)  
+                plt.axvspan(data.index[val], data.index[val+winsize], color='green', alpha=0.5)  
               
         # plt.axvline(x=365, color='red')
         # plt.text(305, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
@@ -153,9 +160,10 @@ def plot_regimes(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
         # plt.legend(['GW$_{mb}$', 'GW$_{sg}$', 'T', 'Strain$_{ew}$', 'Strain$_{ns}$'], loc='upper right', frameon=True, ncol=5)
         plt.legend(plot_var, loc='upper right', frameon=True, ncol=5)
         plt.xlabel('')
-        plt.ylabel('normalized values')
-        # plt.savefig("../res/georegimes2.pdf", bbox_inches='tight')
+        plt.ylabel('Values')
         # Convert month number to month name
+        # plt.gcf().autofmt_xdate()
+        # plt.savefig("../res/hurricane.pdf", bbox_inches='tight')
         plt.show()
 
     else:
