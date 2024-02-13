@@ -48,9 +48,7 @@ def read_file(file_path):
 
     return data
 
-def find_time_related_columns(file_path):
-    # Read the text file into a DataFrame
-    df = read_file(file_path)
+def find_time_related_columns(df):
 
     # List of potential time-related column names
     time_column_names = ['date', 'Date', 'timestep', 'timestamp']
@@ -95,12 +93,15 @@ def find_optimal_k(data):
 
     # Suppress exceptions
     with suppress(AttributeError):
+
+        plt.figure(figsize=(5,3))
         visualizer = KElbowVisualizer(model, k=(2, 6), metric='calinski_harabasz', timings=False)
         visualizer.fit(data)  # Fit the data to the visualizer
+        plt.close()
 
         # Retrieve the optimal k
         optimal_k = visualizer.elbow_value_
-
+        print(f'Optimal regimes: {optimal_k}')
         return optimal_k
 
 def pyriemann_clusters(data, k):
@@ -167,8 +168,14 @@ def get_reduced_set(df):
     reduced_df = df.iloc[:, selected_idx].copy()
     return reduced_df
 
+def plot_marker(df, max_val_lst, dict):
 
-def visualize_regimes(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
+    counter = 0
+    for column, max_index in dict.items():
+        plt.scatter(max_index, df.loc[max_index, column], color='red') #label=f'Max {column}'
+        counter = counter + 1
+
+def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
      
     if dtype == 'real':
           
@@ -190,36 +197,43 @@ def visualize_regimes(data, plot_var, clusters, cluster_idx, winsize, dtype='rea
 
             curr = clusters[c]
             val = cluster_idx[c]
+            rcp = 0
             
             if prev != curr:
-                plt.axvline(x=data.index[val], color='red', linestyle='--', linewidth=0.75)
+                plt.axvline(x=data.index[val], color='black', linestyle='--', linewidth=0.75)
+                # max_vals, max_indices = data.loc[rcp: val].max(), data.loc[rcp: val].idxmax()
+                # plot_marker(data, max_vals, max_indices)
+                rcp = val
                 prev = curr
             
             if clusters[c] == 0:
-                plt.axvspan(data.index[val], data.index[val+winsize], color='white', alpha=0.5)
+                plt.axvspan(data.index[val], data.index[val+winsize], color='gray', alpha=0.25)
             
             if clusters[c] == 1:
-                plt.axvspan(data.index[val], data.index[val+winsize], color='gray', alpha=0.25)    #random.choice(['green', 'blue', 'red'])
+                plt.axvspan(data.index[val], data.index[val+winsize], color='white', alpha=0.25)    #random.choice(['green', 'blue', 'red'])
             
             if clusters[c] == 2:
-                plt.axvspan(data.index[val], data.index[val+winsize], color='blue', alpha=0.2)    
+                plt.axvspan(data.index[val], data.index[val+winsize], color='green', alpha=0.15)    
             
             if clusters[c] == 3:
-                plt.axvspan(data.index[val], data.index[val+winsize], color='green', alpha=0.5)  
-              
-        # plt.axvline(x=365, color='red')
+                plt.axvspan(data.index[val], data.index[val+winsize], color='blue', alpha=0.15)  
+        
+        # max_vals, max_indices = data.loc[val: ].max(), data.loc[val: ].idxmax()
+        # plot_marker(data, max_vals, max_indices)
+        plt.axvline(x=365, color='red')
         # plt.text(305, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
-        # plt.axvline(x=730, color='red')
+        plt.axvline(x=730, color='red')
         # plt.text(670, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
+        # plt.axvline(x=1095, color='red')
         plt.ylim(0, 1.35)
         # plt.gcf().autofmt_xdate()
         # plt.legend(['GW$_{mb}$', 'GW$_{sg}$', 'T', 'Strain$_{ew}$', 'Strain$_{ns}$'], loc='upper right', frameon=True, ncol=5)
-        plt.legend(plot_var, loc='upper right', frameon=True, ncol=5)
-        plt.xlabel('')
+        plt.legend(plot_var, loc='upper left', frameon=True, ncol=4)
+        plt.xlabel('Data points')
         plt.ylabel('Values')
         # Convert month number to month name
         # plt.gcf().autofmt_xdate()
-        # plt.savefig("../res/hurricane.pdf", bbox_inches='tight')
+        # plt.savefig("../res/riemannian.pdf", bbox_inches='tight')
         plt.show()
 
     else:
