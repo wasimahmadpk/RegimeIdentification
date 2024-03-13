@@ -153,10 +153,21 @@ def get_regimes(data, wsize, dist_metric, k=None, dim='full'):
     dfs = []
         # for c in range(len(list(set(clusters)))):
         #     dfs.append(newdf.loc[newdf['Clusters'] == list(set(clusters))[c]])
+    prev = ''
+    adjusted_idx = []
+    for i in range(len(clusters)):
+        if prev == '':
+            adjusted_idx.append(cluster_idx[i])
+            prev = clusters[0]
+        else:
+            if prev != clusters[i]:
+                adjusted_idx.append(cluster_idx[i])
+                prev = clusters[i]
+    
     zip_regimes = list(zip(clusters, cluster_idx))
     print("Regimes:" + " ".join(map(str, zip_regimes)))
 
-    return clusters, cluster_idx, dfs
+    return clusters, cluster_idx, adjusted_idx, dfs
    
 
 def get_reduced_set(df):
@@ -189,7 +200,7 @@ def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
         col = ['teal', 'slategrey', 'goldenrod']
         mark = ['-', '--', '.-.']
 
-        data[plot_var].plot(use_index=True, cmap='tab10', figsize=(9, 3), linewidth=0.66)
+        data[plot_var].plot(figsize=(9, 3), linewidth=0.66)
         plt.legend(plot_var)
 
         prev = clusters[0]
@@ -198,42 +209,42 @@ def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
             curr = clusters[c]
             val = cluster_idx[c]
             rcp = 0
-            
+            print(f'Index data: {data.index[val]}, Index value: {val}', )
             if prev != curr:
-                plt.axvline(x=data.index[val], color='black', linestyle='--', linewidth=0.75)
+                plt.axvline(x=val, color='black', linestyle='--', linewidth=0.75)
                 # max_vals, max_indices = data.loc[rcp: val].max(), data.loc[rcp: val].idxmax()
                 # plot_marker(data, max_vals, max_indices)
                 rcp = val
                 prev = curr
             
             if clusters[c] == 0:
-                plt.axvspan(data.index[val], data.index[val+winsize], color='gray', alpha=0.25)
+                plt.axvspan(val, val+winsize, color='gray', alpha=0.25)
             
             if clusters[c] == 1:
-                plt.axvspan(data.index[val], data.index[val+winsize], color='white', alpha=0.25)    #random.choice(['green', 'blue', 'red'])
+                plt.axvspan(val, val+winsize, color='white', alpha=0.25)    #random.choice(['green', 'blue', 'red'])
             
             if clusters[c] == 2:
-                plt.axvspan(data.index[val], data.index[val+winsize], color='green', alpha=0.15)    
+                plt.axvspan(val, val+winsize, color='green', alpha=0.25)    #data.index[val], data.index[val+winsize]
             
             if clusters[c] == 3:
-                plt.axvspan(data.index[val], data.index[val+winsize], color='blue', alpha=0.15)  
+                plt.axvspan(val, val+winsize, color='blue', alpha=0.15)  
         
         # max_vals, max_indices = data.loc[val: ].max(), data.loc[val: ].idxmax()
         # plot_marker(data, max_vals, max_indices)
-        plt.axvline(x=365, color='red')
+        # plt.axvline(x=365, color='red')
         # plt.text(305, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
-        plt.axvline(x=730, color='red')
+        # plt.axvline(x=730, color='red')
         # plt.text(670, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
         # plt.axvline(x=1095, color='red')
-        plt.ylim(0, 1.35)
+        plt.ylim(0, 1.65)
         # plt.gcf().autofmt_xdate()
         # plt.legend(['GW$_{mb}$', 'GW$_{sg}$', 'T', 'Strain$_{ew}$', 'Strain$_{ns}$'], loc='upper right', frameon=True, ncol=5)
-        plt.legend(plot_var, loc='upper left', frameon=True, ncol=4)
+        plt.legend(plot_var, loc='upper left', frameon=True, ncol=2)
         plt.xlabel('Data points')
         plt.ylabel('Values')
         # Convert month number to month name
         # plt.gcf().autofmt_xdate()
-        # plt.savefig("../res/riemannian.pdf", bbox_inches='tight')
+        # plt.savefig("../res/climate_regimes.pdf", bbox_inches='tight')
         plt.show()
 
     else:
