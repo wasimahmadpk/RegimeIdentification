@@ -55,7 +55,7 @@ We test our method on synthetically generated multivariate nonlinear non-station
 
 
 ## Dependencies
-The file `requirements.txt` contains all the packages that are related to the project.
+The file `requirements.txt` contains all libraries for this project (Use python=3.8.15).
 To install them, simply create a new [conda](https://docs.conda.io/en/latest/) environment and type
 ```
 pip install -r requirements.txt
