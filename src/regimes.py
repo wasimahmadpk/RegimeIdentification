@@ -10,9 +10,11 @@ from sklearn import metrics
 # import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.ticker as ticker
 from sklearn.cluster import KMeans
 from dimreduce import reduce_dimension
 from pyriemann.clustering import Kmeans
+from pyriemann.utils.covariance import covariances_X
 from scipy.spatial.distance import cdist
 from statsmodels.tsa.stattools import adfuller
 from yellowbrick.cluster import KElbowVisualizer
@@ -21,7 +23,6 @@ import warnings
 from contextlib import suppress
 
 plt.rcParams['figure.dpi'] = 200
-
 
 # Parameters
 pars = parameters.get_syn_params()
@@ -121,7 +122,8 @@ def pyriemann_clusters(data, k):
 
 def get_regimes(data, wsize, dist_metric, k=None, dim='full'):
 
-    flat_cov_mat, cov_mat, cluster_idx = getSPDMs(data, wsize)    
+    reg_param = 0.1
+    flat_cov_mat, cov_mat, cluster_idx = getSPDMs(data, wsize, reg_param)    
     
     if dim.lower() != 'full':
         assert int(dim) < len(data.columns), f"Reduced dimension:{int(dim)} is greater than full dimension:{len(data.columns)} ."
@@ -200,16 +202,20 @@ def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
         col = ['teal', 'slategrey', 'goldenrod']
         mark = ['-', '--', '.-.']
 
-        data[plot_var].plot(figsize=(9, 3), linewidth=0.66)
+        ax = data[plot_var].plot(cmap='viridis_r', figsize=(9, 3), linewidth=0.66)
         plt.legend(plot_var)
 
         prev = clusters[0]
+        
+        # Create a dictionary to store regime names and starting points
+        regime_starting_points = {}
         for c in range(len(cluster_idx)):
 
             curr = clusters[c]
             val = cluster_idx[c]
             rcp = 0
-            print(f'Index data: {data.index[val]}, Index value: {val}', )
+            # print(f'Index data: {data.index[val]}, Index value: {val}')
+            regime_starting_points[f'Regime {c+1}'] = data.index[val]
             if prev != curr:
                 plt.axvline(x=val, color='black', linestyle='--', linewidth=0.75)
                 # max_vals, max_indices = data.loc[rcp: val].max(), data.loc[rcp: val].idxmax()
@@ -218,17 +224,17 @@ def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
                 prev = curr
             
             if clusters[c] == 0:
-                plt.axvspan(val, val+winsize, color='gray', alpha=0.25)
+                plt.axvspan(val, val+winsize, color='gray', alpha=0.15)
             
             if clusters[c] == 1:
-                plt.axvspan(val, val+winsize, color='white', alpha=0.25)    #random.choice(['green', 'blue', 'red'])
+                plt.axvspan(val, val+winsize, color='white', alpha=0.15)    #random.choice(['green', 'blue', 'red'])
             
             if clusters[c] == 2:
-                plt.axvspan(val, val+winsize, color='green', alpha=0.25)    #data.index[val], data.index[val+winsize]
+                plt.axvspan(val, val+winsize, color='green', alpha=0.15)    #data.index[val], data.index[val+winsize]
             
             if clusters[c] == 3:
                 plt.axvspan(val, val+winsize, color='blue', alpha=0.15)  
-        
+        print(regime_starting_points)
         # max_vals, max_indices = data.loc[val: ].max(), data.loc[val: ].idxmax()
         # plot_marker(data, max_vals, max_indices)
         # plt.axvline(x=365, color='red')
@@ -236,15 +242,14 @@ def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
         # plt.axvline(x=730, color='red')
         # plt.text(670, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
         # plt.axvline(x=1095, color='red')
-        plt.ylim(0, 1.65)
+        plt.ylim(0, 1.5)
         # plt.gcf().autofmt_xdate()
-        # plt.legend(['GW$_{mb}$', 'GW$_{sg}$', 'T', 'Strain$_{ew}$', 'Strain$_{ns}$'], loc='upper right', frameon=True, ncol=5)
-        plt.legend(plot_var, loc='upper left', frameon=True, ncol=2)
+        plt.legend(plot_var, loc='upper right', frameon=True, ncol=3)
         plt.xlabel('Data points')
         plt.ylabel('Values')
-        # Convert month number to month name
-        # plt.gcf().autofmt_xdate()
-        # plt.savefig("../res/climate_regimes.pdf", bbox_inches='tight')
+        ax.tick_params(length=4)
+        plt.grid(False)
+        plt.savefig("../res/climate_regimes.pdf", bbox_inches='tight')
         plt.show()
 
     else:
