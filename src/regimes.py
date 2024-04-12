@@ -235,13 +235,16 @@ def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
             if clusters[c] == 3:
                 plt.axvspan(val, val+winsize, color='blue', alpha=0.15)  
         print(regime_starting_points)
-        # max_vals, max_indices = data.loc[val: ].max(), data.loc[val: ].idxmax()
-        # plot_marker(data, max_vals, max_indices)
-        # plt.axvline(x=365, color='red')
-        # plt.text(305, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
-        # plt.axvline(x=730, color='red')
-        # plt.text(670, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
-        # plt.axvline(x=1095, color='red')
+        
+        if dtype!='real':
+            max_vals, max_indices = data.loc[val: ].max(), data.loc[val: ].idxmax()
+            plot_marker(data, max_vals, max_indices)
+            plt.axvline(x=365, color='red')
+            plt.text(305, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
+            plt.axvline(x=730, color='red')
+            plt.text(670, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
+            plt.axvline(x=1095, color='red')
+        
         plt.ylim(0, 1.5)
         # plt.gcf().autofmt_xdate()
         plt.legend(plot_var, loc='upper right', frameon=True, ncol=3)
@@ -249,7 +252,7 @@ def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
         plt.ylabel('Values')
         ax.tick_params(length=4)
         plt.grid(False)
-        plt.savefig("../res/climate_regimes.pdf", bbox_inches='tight')
+        # plt.savefig("../res/climate_regimes.pdf", bbox_inches='tight')
         plt.show()
 
     else:
