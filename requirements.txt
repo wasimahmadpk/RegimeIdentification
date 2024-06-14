@@ -19,6 +19,7 @@ bleach==4.1.0
 blinker==1.4
 brotlipy==0.7.0
 cachetools==5.2.0
+celluloid==0.2.0
 certifi==2022.9.24
 cffi==1.15.1
 cftime==1.6.3
@@ -61,6 +62,7 @@ importlib-metadata==4.11.3
 importlib-resources==5.2.0
 intel-openmp==2024.0.2
 ipykernel==6.15.2
+ipympl==0.9.3
 ipython==8.7.0
 ipython-genutils==0.2.0
 ipywidgets==7.6.5
