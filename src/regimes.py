@@ -1,16 +1,9 @@
-import random
 import parameters
 import numpy as np
 import pandas as pd
-import seaborn as sns
-from scipy import stats
 from spdms import getSPDMs
-from sklearn import metrics
-# from sklearn import metrics
 # import statsmodels.api as sm
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import matplotlib.ticker as ticker
 from sklearn.cluster import KMeans
 from dimreduce import reduce_dimension
 from pyriemann.clustering import Kmeans
@@ -188,7 +181,7 @@ def plot_marker(df, max_val_lst, dict):
         plt.scatter(max_index, df.loc[max_index, column], color='red') #label=f'Max {column}'
         counter = counter + 1
 
-def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
+def visualize_prev(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
      
     if dtype == 'real':
           
@@ -296,4 +289,74 @@ def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
         # plt.xlabel('data points', fontsize=10)
         # plt.savefig("../res/synwin90EE.pdf")
 
+        plt.show()
+
+
+
+def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
+    """
+    Visualize detected regimes in time series data.
+    
+    Parameters:
+        data (pd.DataFrame): The dataset containing time series.
+        plot_var (list): List of variables to plot.
+        clusters (list): Assigned cluster labels for each window.
+        cluster_idx (list): Start indices for each window.
+        winsize (int): Window size used in regime detection.
+        dtype (str): 'real' for real-world data, 'synthetic' for synthetic data.
+    """
+    
+    regime_colors = ['teal', 'white','slategrey', 'goldenrod'] #['green', 'white', 'gray', 'blue', 'yellow']
+    
+    if dtype == 'real':
+        plt.figure(figsize=(15, 4))
+        ax = data[plot_var].plot(figsize=(9, 3), linewidth=0.66)
+        plt.legend(plot_var)
+
+        prev_cluster = clusters[0]
+        regime_start_points = {}
+
+        for idx, val in enumerate(cluster_idx):
+            current_cluster = clusters[idx]
+            regime_start_points[f'Regime {idx+1}'] = data.index[val]
+
+            if prev_cluster != current_cluster:
+                # plt.axvline(x=val, color='black', linestyle='--', linewidth=0.75)
+                prev_cluster = current_cluster
+            
+            plt.axvspan(val, val + winsize, color=regime_colors[current_cluster], alpha=0.15)
+
+        print("Regime Starting Points:")
+        print(regime_start_points)
+
+
+        plt.ylim(0, 1.1)
+        plt.xlabel('Data points')
+        plt.ylabel('Values')
+        plt.legend(plot_var, loc='upper right', ncol=3, frameon=True)
+        plt.grid(False)
+        plt.savefig("../res/hurricane_anomaly.pdf", bbox_inches='tight', dpi=600, format='pdf')
+
+        plt.show()
+
+    else:  # synthetic data
+        plt.figure(figsize=(6, 3))
+        markers = ['-', '--', '-.']
+        colors = ['teal', 'slategrey', 'goldenrod']
+        synthetic_vars = ['Z1', 'Z3', 'Z5']
+
+        for i, v in enumerate(synthetic_vars):
+            plt.plot(data[v], markers[i], color=colors[i])
+
+        plt.legend(synthetic_vars)
+
+        for idx, val in enumerate(cluster_idx):
+            plt.axvspan(val, val + winsize, facecolor=regime_colors[clusters[idx]], alpha=0.15)
+
+        # Draw ground truth change points
+        plt.axvline(x=364, color='red')
+        plt.axvline(x=720, color='red')
+
+        plt.legend(['$Z_{1}$', '$Z_{3}$', '$Z_{5}$'], loc='upper left', fontsize=10, prop=dict(weight='bold'))
+        plt.ylabel(f"Window={winsize}", fontsize=15)
         plt.show()
