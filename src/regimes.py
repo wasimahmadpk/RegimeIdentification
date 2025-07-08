@@ -181,116 +181,6 @@ def plot_marker(df, max_val_lst, dict):
         plt.scatter(max_index, df.loc[max_index, column], color='red') #label=f'Max {column}'
         counter = counter + 1
 
-def visualize_prev(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
-     
-    if dtype == 'real':
-          
-        # Plot regimes in real data
-        colors = ['r', 'g', 'b', 'y', 'c']
-
-        t = np.arange(0, cluster_idx[-1]+winsize)
-        start = 0
-
-        plt.figure(figsize=(15, 4))
-        col = ['teal', 'slategrey', 'goldenrod']
-        mark = ['-', '--', '.-.']
-
-        ax = data[plot_var].plot(cmap='viridis_r', figsize=(9, 3), linewidth=0.66)
-        plt.legend(plot_var)
-
-        prev = clusters[0]
-        
-        # Create a dictionary to store regime names and starting points
-        regime_starting_points = {}
-        for c in range(len(cluster_idx)):
-
-            curr = clusters[c]
-            val = cluster_idx[c]
-            rcp = 0
-            # print(f'Index data: {data.index[val]}, Index value: {val}')
-            regime_starting_points[f'Regime {c+1}'] = data.index[val]
-            if prev != curr:
-                plt.axvline(x=val, color='black', linestyle='--', linewidth=0.75)
-                # max_vals, max_indices = data.loc[rcp: val].max(), data.loc[rcp: val].idxmax()
-                # plot_marker(data, max_vals, max_indices)
-                rcp = val
-                prev = curr
-            
-            if clusters[c] == 0:
-                plt.axvspan(val, val+winsize, color='gray', alpha=0.15)
-            
-            if clusters[c] == 1:
-                plt.axvspan(val, val+winsize, color='white', alpha=0.15)    #random.choice(['green', 'blue', 'red'])
-            
-            if clusters[c] == 2:
-                plt.axvspan(val, val+winsize, color='green', alpha=0.15)    #data.index[val], data.index[val+winsize]
-            
-            if clusters[c] == 3:
-                plt.axvspan(val, val+winsize, color='blue', alpha=0.15)  
-        print(regime_starting_points)
-        
-        if dtype!='real':
-            max_vals, max_indices = data.loc[val: ].max(), data.loc[val: ].idxmax()
-            plot_marker(data, max_vals, max_indices)
-            plt.axvline(x=365, color='red')
-            plt.text(305, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
-            plt.axvline(x=730, color='red')
-            plt.text(670, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
-            plt.axvline(x=1095, color='red')
-        
-        plt.ylim(0, 1.5)
-        # plt.gcf().autofmt_xdate()
-        plt.legend(plot_var, loc='upper right', frameon=True, ncol=3)
-        plt.xlabel('Data points')
-        plt.ylabel('Values')
-        ax.tick_params(length=4)
-        plt.grid(False)
-        # plt.savefig("../res/climate_regimes.pdf", bbox_inches='tight')
-        plt.show()
-
-    else:
-        # Plot regimes in synthetic data
-
-        plot_var = ['Z1', 'Z3', 'Z5']
-        colors = ['r', 'g', 'b', 'y', 'c']
-
-        t = np.arange(0, cluster_idx[-1]+winsize)
-        start = 0
-
-        plt.figure(figsize=(6, 3))
-        col = ['teal', 'slategrey', 'goldenrod']
-        mark = ['-', '--', '.-.']
-
-        for i, v in enumerate(plot_var):
-            plt.plot(data[v], mark[i], color=col[i])
-   
-        plt.legend(plot_var)
-        for c in range(len(cluster_idx)):
-                
-            val = cluster_idx[c]
-            # print(f'{val} to {val+winsize}')
-            if clusters[c] == 0:
-                plt.axvspan(val, val+winsize, facecolor='green', alpha=0.15)    
-            if clusters[c] == 1:
-                plt.axvspan(val, val+winsize, facecolor='white', alpha=0.25)  
-            if clusters[c] == 2:
-                plt.axvspan(val, val+winsize, facecolor='red', alpha=0.15)  
-            if clusters[c] == 3:
-                plt.axvspan(val, val+winsize, facecolor='yellow', alpha=0.15)  
-        
-        plt.axvline(x=364, color='red')
-        # plt.text(305, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
-        plt.axvline(x=720, color='red')
-        # plt.text(670, 1.10, 'Change Point', fontsize=9.0, fontweight='bold')
-        plt.ylim(0, 1.3)
-        plt.legend(['$Z_{1}$', '$Z_{2}$', '$Z_{3}$'], loc='upper left', fontsize=50, prop=dict(weight='bold'))
-        # plt.title("Euclidean", fontsize=15)
-        plt.ylabel("window=90", fontsize=15)
-        # plt.xlabel('data points', fontsize=10)
-        # plt.savefig("../res/synwin90EE.pdf")
-
-        plt.show()
-
 
 
 def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
@@ -321,7 +211,7 @@ def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
             regime_start_points[f'Regime {idx+1}'] = data.index[val]
 
             if prev_cluster != current_cluster:
-                # plt.axvline(x=val, color='black', linestyle='--', linewidth=0.75)
+                plt.axvline(x=val, color='red', linestyle='--', linewidth=0.75)
                 prev_cluster = current_cluster
             
             plt.axvspan(val, val + winsize, color=regime_colors[current_cluster], alpha=0.15)
@@ -330,10 +220,10 @@ def visualize(data, plot_var, clusters, cluster_idx, winsize, dtype='real'):
         print(regime_start_points)
 
 
-        plt.ylim(0, 1.1)
+        plt.ylim(0, 1.25)
         plt.xlabel('Data points')
         plt.ylabel('Values')
-        plt.legend(plot_var, loc='upper right', ncol=3, frameon=True)
+        plt.legend(plot_var, loc='upper left', ncol=1, frameon=True)
         plt.grid(False)
         plt.savefig("../res/hurricane_anomaly.pdf", bbox_inches='tight', dpi=600, format='pdf')
 
